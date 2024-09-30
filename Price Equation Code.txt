@@ -1,0 +1,151 @@
+# LIBRARIES 
+
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+
+
+# Assign column names to the dataset
+
+names(Price_eq_data) <- c("trait", "fitness", "id")
+
+# DIVIDE THE ORIGINAL DATASET INTO TWO DATASET WITH DIFFERENT TIMES 
+  
+timestep_ancestor <- Price_eq_data[n : m, 1:3]
+   
+timestep_descendant <- Price_eq_data[n: m, 1:3]
+
+# PROCEDURE TO CALCULATE COVARIANCE WITHIN GROUPS BY TRAIT VALUE
+
+trait_0 <- mean_fitness_trait_population %>%
+  filter(mean_trait <= 1) %>%
+  select(mean_trait, mean_fitness, id) # SAME PROCEDURE FOR TRAIT_1...TRAIT_6
+
+
+# Calculate mean fitness and mean trait by identification number "id"
+
+mean_fitness_trait_population <- Price_eq_data %>%
+  group_by(id) %>%
+  summarize(mean_fitness = mean(fitness),
+            mean_trait = mean(trait))
+
+
+# same but for ancestor
+
+mean_fitness_trait_ancestor <- timestep_ancestor %>%
+  group_by(id) %>%
+  summarize(mean_fitness = mean(fitness),
+            mean_trait = mean(trait))
+
+# and descendant
+
+mean_fitness_trait_descendant <- timestep_descendant %>%
+  group_by(id) %>%
+  summarize(mean_fitness = mean(fitness),
+            mean_trait = mean(trait))
+
+
+# Calculate mean fitness for entire population
+
+W_population <- mean(mean_fitness_trait_population$mean_fitness)
+
+
+# Calculate relative fitness for entire population
+
+w_relative_pop <- (mean_fitness_trait_population$mean_fitness / W_population)
+
+
+# Calculate mean fitness for ANCESTOR
+
+W_ancestor <- mean(mean_fitness_trait_ancestor$mean_fitness)
+
+
+# Calculate relative fitness for ANCESTOR
+
+w_relative_ancestor <- (mean_fitness_trait_ancestor$mean_fitness / W_population)
+
+
+# Calculate mean fitness for DESCENDANT
+
+W_descendant <- mean(mean_fitness_trait_descendant$mean_fitness)
+
+
+# Calculate relative fitness for DESCENDANT
+
+w_relative_descendant <- (mean_fitness_trait_descendant$mean_fitness / W_population)
+
+
+
+# COVARIANCE TERM entire population
+
+trait_pop <- mean_fitness_trait_population$mean_trait 
+
+w_pop <- mean_fitness_trait_population$mean_fitness
+
+covariance_trait_fit_pop <- cov(trait_pop,w_pop)
+
+
+# COVARIANCE TERM ancestor
+
+trait_anc <- mean_fitness_trait_ancestor$mean_trait 
+
+w_anc <- mean_fitness_trait_ancestor$mean_fitness
+
+covariance_trait_fit_anc <- cov(trait_anc,w_anc)
+
+
+# COVARIANCE TERM descendant
+
+trait_des <- mean_fitness_trait_descendant$mean_trait 
+
+w_des <- mean_fitness_trait_descendant$mean_fitness
+
+covariance_trait_fit_des <- cov(trait_des,w_des)
+
+
+# COVARIANCE WITHIN GROUPS BY TIME DEPENDENCE
+
+S_within_anc <- timestep_ancestor %>%
+  group_by(id) %>%
+  summarize(cov_0 = cov(trait, fitness, use = "complete.obs"))
+
+S_within_des <- timestep_descendant %>%
+  group_by(id) %>%
+  summarize(cov_0 = cov(trait, fitness, use = "complete.obs"))
+
+S_total_within <- mean(S_within_anc$cov_0 + S_within_des$cov_0)
+
+S_total_in_out_groups <- S_total_within + covariance_trait_fit_pop
+
+
+
+# CALCULATE THE DIFFERENCE TERM BY id BETWEEN THE TWO TIMESTEPS
+
+# Merge the datasets by "id"
+
+merged_data <- merge(mean_fitness_trait_ancestor, mean_fitness_trait_descendant, by = "id", suffixes = c("_anc", "_des"))
+
+# Calculate the difference in trait
+
+difference_anc_des_trait <- merged_data %>%
+  mutate(trait_difference = mean_trait_des - mean_trait_anc)
+
+Dif_anc_des <- difference_anc_des_trait$trait_difference 
+
+# FINAL FORM OF PRICE EQUATION
+
+mean_trait_change <- ((covariance_trait_fit_anc)/W_population + (w_relative_pop * Dif_anc_des)/W_population) 
+
+
+# SINCE mean_trait_change GIVES A LIST OF VALUES RREPRESENTING THE MEAN CHANGE IN TRAIT VALUE FOR EACH id
+# WE TAKE THE MEAN VALUE OF THE ENTIRE LIST AS THE FINAL RESULT OF THE PRICE EQUATION
+
+Final_trait <- mean(mean_trait_change)
+
+
+
+
+
+
+
+ 

@@ -1,0 +1,117 @@
+# DATASETS FOR ALLELE FREQUENCY AND FITNESS VALUES
+
+al.2 <- read.table("Allele-data.csv", sep = ";", head = TRUE)
+
+fit.2 <- read.table("Fitness.csv", sep = ";", head = TRUE)
+
+
+colnames(al.2)[1] = "apc.00"
+colnames(fit.2)[1] = "apc.00"
+
+
+
+# _9, _7 ETC. REFER TO THE PROBABILITY OF MUTATION, HENCE REFER TO THE VARIOUS SCENARIOS 
+
+#----mean fitness apc 00-----------------------------------
+
+w_apc00_9 <- mean(fit.9$apc.00)
+w_apc00_7 <- mean(fit.7$apc.00)
+w_apc00_6 <- mean(fit.6$apc.00)
+w_apc00_5 <- mean(fit.5$apc.00)
+w_apc00_4 <- mean(fit.4$apc.00)
+w_apc00_2 <- mean(fit.2$apc.00)
+
+#----mean fitness apc 10-----------------------------------
+
+w_apc10_9 <- mean(fit.9$apc.10)
+w_apc10_7 <- mean(fit.7$apc.10)
+w_apc10_6 <- mean(fit.6$apc.10)
+w_apc10_5 <- mean(fit.5$apc.10)
+w_apc10_4 <- mean(fit.4$apc.10)
+w_apc10_2 <- mean(fit.2$apc.10)
+
+#----mean fitness apc 11-----------------------------------
+
+w_apc11_9 <- mean(fit.9$apc.11)
+w_apc11_7 <- mean(fit.7$apc.11)
+w_apc11_6 <- mean(fit.6$apc.11)
+w_apc11_5 <- mean(fit.5$apc.11)
+w_apc11_4 <- mean(fit.4$apc.11)
+w_apc11_2 <- mean(fit.2$apc.11)
+
+#----mean fitness kras 00-----------------------------------
+
+w_kras00_9 <- mean(fit.9$kras.00)
+w_kras00_7 <- mean(fit.7$kras.00)
+w_kras00_6 <- mean(fit.6$kras.00)
+w_kras00_5 <- mean(fit.5$kras.00)
+w_kras00_4 <- mean(fit.4$kras.00)
+w_kras00_2 <- mean(fit.2$kras.00)
+
+#----mean fitness kras 10-----------------------------------
+
+w_kras10_9 <- mean(fit.9$kras.10)
+w_kras10_7 <- mean(fit.7$kras.10)
+w_kras10_6 <- mean(fit.6$kras.10)
+w_kras10_5 <- mean(fit.5$kras.10)
+w_kras10_4 <- mean(fit.4$kras.10)
+w_kras10_2 <- mean(fit.2$kras.10)
+
+#----mean fitness kras 11-----------------------------------
+
+w_kras11_9 <- mean(fit.9$kras.11)
+w_kras11_7 <- mean(fit.7$kras.11)
+w_kras11_6 <- mean(fit.6$kras.11)
+w_kras11_5 <- mean(fit.5$kras.11)
+w_kras11_4 <- mean(fit.4$kras.11)
+w_kras11_2 <- mean(fit.2$kras.11)
+
+
+#----mean fitness p53 00-----------------------------------
+
+w_p5300_9 <- mean(fit.9$p53.00)
+w_p5300_7 <- mean(fit.7$p53.00)
+w_p5300_6 <- mean(fit.6$p53.00)
+w_p5300_5 <- mean(fit.5$p53.00)
+w_p5300_4 <- mean(fit.4$p53.00)
+w_p5300_2 <- mean(fit.2$p53.00)
+
+#----mean fitness p53 10-----------------------------------
+
+w_p5310_9 <- mean(fit.9$p53.10)
+w_p5310_7 <- mean(fit.7$p53.10)
+w_p5310_6 <- mean(fit.6$p53.10)
+w_p5310_5 <- mean(fit.5$p53.10)
+w_p5310_4 <- mean(fit.4$p53.10)
+w_p5310_2 <- mean(fit.2$p53.10)
+#----mean fitness p53 11-----------------------------------
+
+w_p5311_9 <- mean(fit.9$p53.11)
+w_p5311_7 <- mean(fit.7$p53.11)
+w_p5311_6 <- mean(fit.6$p53.11)
+w_p5311_5 <- mean(fit.5$p53.11)
+w_p5311_4 <- mean(fit.4$p53.11)
+w_p5311_2 <- mean(fit.2$p53.11)
+
+#--------genetic model---------------------------------------
+
+
+
+# SELECTED ALLELES 
+
+p <- al.2$gene.00
+q <- al.2$gene.11
+pq <- p * q
+w00 <- w_gene00_2
+w10 <- w_gene10_2
+w11 <- w_gene11_2
+
+
+# DENOMINATOR
+
+Wp <- (p * w00) + (1 - p) * w11 
+
+#PESO SELEZIONE NATURALE TRA GENERAZIONI
+
+delta_gene_scenario <- (p * (1 - p) * (w00 - w11)) / Wp
+
