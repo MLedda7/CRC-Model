@@ -111,7 +111,7 @@ w11 <- w_gene11_2
 
 Wp <- (p * w00) + (1 - p) * w11 
 
-#PESO SELEZIONE NATURALE TRA GENERAZIONI
+# FINAL EQUATION: VARIABLE NAME EX. delta_apc_9
 
 delta_gene_scenario <- (p * (1 - p) * (w00 - w11)) / Wp
 
